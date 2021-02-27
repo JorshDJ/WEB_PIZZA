@@ -1,0 +1,148 @@
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package controlador;
+
+import beans.Articulos;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.jfree.chart.ChartUtilities;
+import dao.NegocioPizza;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+//grafico de barras
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+//grafico de torta
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+/**
+ *
+ * @author 51954
+ */
+public class grafico1 extends HttpServlet {
+NegocioPizza   obj=new NegocioPizza();
+  JFreeChart circulo(int an){
+   DefaultPieDataset ds=new DefaultPieDataset(); //llenar la data a graficar
+   int cuenta=1;
+   for(Articulos  x:obj.lisGenArt()){
+       ds.setValue(x.getDescripArtic(), x.getPrecioUnitArtic());
+       cuenta++;
+       if(cuenta>an)break;
+   }
+  //graficar en memoria
+  JFreeChart fg=ChartFactory.createPieChart3D("anio "+an, ds, true, true, true);
+  return fg;
+   
+}
+//grafico de barras
+ 
+JFreeChart barra(int an){
+   DefaultCategoryDataset ds=new DefaultCategoryDataset(); //llenar la data a graficar
+   int con=1;
+   for(Articulos  x:obj.lisGenArt()){
+       ds.setValue(x.getPrecioUnitArtic(), "ventas",x.getIdArtic());
+       con++;
+       if(con>an)break;
+   }
+  //graficar en memoria
+  JFreeChart fg=ChartFactory.createBarChart3D("anio "+an, "coda","precio", ds,
+          PlotOrientation.VERTICAL,true, true,true);
+  return fg;
+   
+} 
+
+//grafico lineal
+JFreeChart  Lineal(int an){
+  XYSeries  ds=new XYSeries("serie1");
+//llenar la data a graficar
+int cuenta=1;
+   for(Articulos  x:obj.lisGenArt()){
+       ds.add(cuenta, x.getPrecioUnitArtic());
+       cuenta++;
+       if(cuenta>an)break;
+   }
+   XYDataset  data=new XYSeriesCollection(ds);
+  //graficar en memoria
+  JFreeChart fg=ChartFactory.createXYLineChart("nro de articulos "+an, "nro","Precio", data,
+          PlotOrientation.VERTICAL,true, true,true);
+  return fg;
+   
+}  
+
+ 
+    
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("image/jpeg");
+         OutputStream flujo=response.getOutputStream();
+         int an=Integer.parseInt(request.getParameter("an"));
+         int opc=Integer.parseInt(request.getParameter("opc"));
+        switch(opc){
+            case 1:  ChartUtilities.writeChartAsJPEG(flujo, circulo(an), 400, 400); break;
+            case 2:  ChartUtilities.writeChartAsJPEG(flujo, barra(an), 400, 400); break;
+            case 3:  ChartUtilities.writeChartAsJPEG(flujo, Lineal(an), 400, 400); break;
+         
+        } 
+        
+            
+           /*  ChartUtilities.writeChartAsJPEG(flujo, circulo(an), 400, 400);
+             ChartUtilities.writeChartAsJPEG(flujo, barra(an), 400, 400); 
+             ChartUtilities.writeChartAsJPEG(flujo, Lineal(an), 400, 400); */
+  
+        flujo.close();
+        
+
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}

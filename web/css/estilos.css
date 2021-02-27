@@ -1,0 +1,58 @@
+.logo{
+    color: white;
+    width: 23%;
+    text-align: center;
+    font-family: Showcard Gothic;
+}
+.usuario-carrito{
+    width: 5%;
+    text-align: center;
+}
+
+#map{
+    outline: 2px solid black;
+    width: 44%;
+    height: 49%;
+}
+
+.local{
+    display: flex;
+}
+
+.card-title{
+    font-family: Showcard Gothic;
+      color: Black;
+      font-size: 15px;
+}
+
+
+
+.container-footer{
+    width:100% ;
+    height:20%;
+    background-color: #817D7D;
+    color:white;
+    display: flex;
+    text-align:center;
+    display: flex;
+    
+  }
+  
+  
+  .footer-class{
+      font-family: Myriad Pro;
+      color: white;
+      font-size: 18px;
+  }
+  .div-carrucel{
+	background-color: #000000;
+	opacity: 0.6;
+	border-radius: 15px;
+    }
+  .container-login{
+        padding: 10%;
+  }
+
+   
+
+

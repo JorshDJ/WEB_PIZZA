@@ -1,0 +1,123 @@
+
+CREATE DATABASE bdSanCarlos;
+GO
+
+USE bdSanCarlos;
+go
+
+CREATE TABLE  articulos (
+  IdArticulo char(5) NOT NULL  PRIMARY KEY,
+  Descripcion varchar(45) ,
+  PrecioUnidad numERIC(6,0) NOT NULL ,
+  Stock integer  );  
+
+go
+
+
+CREATE TABLE  clientes (
+   tarjeta char(5) NOT NULL  primary key ,
+  nombre varchar(30) NOT NULL  ,
+  credito  numERIC(8,1),
+  PassWord varchar(15) NOT NULL, 
+  correo   varchar(40) 
+  
+);   
+
+go
+
+
+CREATE TABLE faccab (
+  NroFactura char(8) NOT NULL,
+  FechaFactura datetime NOT NULL  ,
+  IdCliente char(8) NOT NULL ,
+  MontoTotal decimal(10,0) NOT NULL  ,
+  PRIMARY KEY (NroFactura)
+); 
+
+
+
+
+CREATE TABLE  facdet (
+  NroFactura char(8) NOT NULL ,
+  IdArticulo char(6) NOT NULL  ,
+   Cantidad int NOT NULL ,
+   primary key(Nrofactura,Idarticulo)
+); 
+
+
+
+
+/* Para la insercion*/
+
+
+INSERT INTO articulos VALUES('POL01','Pizza Margarita',24,400); 
+INSERT INTO ARTICULOS VALUES('CHA02','Pizza Hawajana',35.4,500); 
+INSERT INTO ARTICULOS VALUES('CHA03','Pizza Diávola',25.3,1500); 
+INSERT INTO ARTICULOS VALUES('POL02','2 Pizzas Familiares + 1 Ltr Coca Cola',35,250);  
+INSERT INTO ARTICULOS VALUES('POL03','2 Pizzas Familiares + 1 Ltr. Chicha Morada + 2 Porc. Torta',42,480);  
+INSERT INTO ARTICULOS VALUES('MAL01','1 Pizza Grande + 1 Ltr Coca Cola',49,780);  
+INSERT INTO ARTICULOS VALUES('ZAP01','Pizza Peperoni',25,480);  
+INSERT INTO ARTICULOS VALUES('GOR01','Pizza Fugaza',30.10,30);  
+INSERT INTO ARTICULOS VALUES('PAN01','Pizza Vegetariana',22.13,74);
+
+
+INSERT INTO clientes VALUES('11111', 'Anacleto Calderon , Juan', 2000, '123456','Anacleto@hotmail.com');   
+INSERT INTO clientes VALUES('22222', 'Vilchez Cardenas , Ana', 1300, 'alfa','Vilchez@gmailcom');  
+INSERT INTO clientes VALUES('33333', 'Ramos Villar,Colonia', 1600, 'beta','Ramos@hotmail.com'); 
+INSERT INTO clientes VALUES('44444', 'Castillo Alarcon,Vanessa', 1500, '123','Castillo@hotmail.com');  
+INSERT INTO clientes VALUES('55555', 'Raras Villanueva,Edwin', 1800, 'bet1','Raras@hotmail.com');  
+INSERT INTO clientes VALUES('66666', 'Ramos Balderrama,Cinthia', 1700, '12ta','Ramosb@hotmail.com');  
+ 
+
+INSERT INTO faccab VALUES('00000001','2021/01/02','11111',96);
+INSERT INTO faccab VALUES('00000002','2020/10/21','22222',106.2);
+INSERT INTO faccab VALUES('00000003','2021/01/09','33333',151.80);
+INSERT INTO faccab VALUES('00000004','2021/02/02','44444',140.00);
+INSERT INTO faccab VALUES('00000005','2020/09/02','55555',84.00);
+INSERT INTO faccab VALUES('00000006','2019/01/08','66666',240.80);
+
+
+INSERT INTO facdet VALUES('00000001','POL01',24);
+INSERT INTO facdet VALUES('00000002','CHA02',35);
+INSERT INTO facdet VALUES('00000003','CHA03',25);
+INSERT INTO facdet VALUES('00000004','POL02',35);
+INSERT INTO facdet VALUES('00000005','POL03',42);
+INSERT INTO facdet VALUES('00000006','GOR01',30);
+
+
+/*Procedimientos*/
+
+DELIMITER @@
+DROP PROCEDURE IF EXISTS SPdetalle @@
+CREATE PROCEDURE SPdetalle(fac CHAR(8), coda char(6),  can int)
+BEGIN
+insert into facdet values (fac,coda, can);
+update articulos set stock= stock -can where idarticulo=coda;
+END@@
+
+DELIMITER @@
+DROP PROCEDURE IF EXISTS SPFACTURA @@
+CREATE PROCEDURE SPFACTURA(in codc char(8),in tot numeric(8,1))
+BEGIN
+declare nro int;
+declare fac char(8);
+select ifnull(max(nrofactura),0) + 1  from faccab into nro;
+set fac = lpad(nro,8,'0');
+insert into faccab values (fac,current_date(),codc,tot);
+select fac;
+END@@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
